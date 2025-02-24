@@ -9,6 +9,7 @@
 #include <sstream>
 #include <queue>
 #include <algorithm>
+#include <cstring>
 
 #include "GraphAdjacencyList.h"
 #include "UtilitiesRandom.h"
@@ -46,6 +47,8 @@ struct Result_Path_Distance{
 };
 
 class TrafficAdvisory{
+    friend class TrafficAdvisoryCheck;
+
 public:
     // 默认构造：顶点数是3、边数是1的随机图
     TrafficAdvisory(bool whetherOutput=false);
@@ -76,7 +79,7 @@ public:
      * 使用Dijkstra求标签source到destination绕过passBy（默认值是空串）的最短路径，返回距离值。
      * 如果顶点不存在或不能到达，返回INT_MAX。
     */
-    int dijkstra(const string&, const string&, const string&);
+    int dijkstra(const string&, const string&, const string &passBy="");
     vector<Result_Label_PathLength> dijkstraHelper(const string&, const string&, bool specificLength=false);
 
     /**
@@ -89,14 +92,14 @@ public:
      * 使用Floyd求标签source到destination绕过passBy（默认值是空串）的最短路径，返回距离值。
      * 如果顶点不存在或不能到达，返回INT_MAX。
     */
-    int floyd(const string&, const string&, const string&);
+    int floyd(const string&, const string&, const string &passBy="");
 
     /**
      * 求标签source到destination所有不重复的可行路径，路径上所有顶点不超过maximum_nodes个（默认值是INT_MAX）， 
      * 利用有效排序对所有可行的路径方案依据总长度进行排序输出到文件（如果第4个参数为空，则输出到屏幕，否则输出到其指定文件），
      * 返回可行的复合路径顶点标签序列与距离的向量（源点和终点是同一个顶点，返回0）
     */
-    vector<Result_Path_Distance> allNonRepetitionPaths(const string&, const string&, int, string filename="");
+    vector<Result_Path_Distance> allNonRepetitionPaths(const string&, const string&, int maxNodex=INT_MAX, string filename="");
     void dfsHelper(const string&, const string&, Result_Path_Distance &, 
         vector<Result_Path_Distance> &, unordered_map<string, bool> &vis, int cnt, int maxNodes);
 
@@ -122,7 +125,30 @@ private:
      * 文件以纯文本形式存储表格数据
     */
     template<class T>
-    vector<vector<T>> readCSV(const string &filename, T(*function)(char*));
+    std::vector<std::vector<T>> readCSV(const std::string& filename, T(*convert)(const std::string&)) {
+        std::vector<std::vector<T>> records;
+        std::ifstream in(filename);
+    
+        if (!in) {
+            throw std::runtime_error("无法打开文件: " + filename);
+        }
+    
+        std::string line;
+        while (std::getline(in, line)) {
+            std::vector<T> row;
+            std::stringstream lineStream(line);
+            std::string cell;
+    
+            while (std::getline(lineStream, cell, ',')) {
+                if(cell.empty()) {row.push_back(0);}
+                else {row.push_back(convert(cell));}
+            }
+            records.push_back(std::move(row));
+        }
+    
+        return records;
+    }
+    
 
     // 从一个文件filename创建图对象g
     void graphFromFile(const string &filename);
@@ -136,28 +162,6 @@ private:
     void graphFromFile(const string&, const string&, const string&);
 };
 
-template<class T>
-vector<vector<T>> TrafficAdvisory::readCSV(const string &filename, T(*function)(char*)){
-    vector<vector<T>> records;
 
-    ifstream in(filename);
-    if(!in.is_open()){
-        cerr<<filename<<"文件不能打开！\n";
-        exit(EXIT_FAILURE);
-    }
-
-    string line;
-    while(getline(in, line)){
-        stringstream ss(line);
-        string cell;
-        vector<T> row;
-        while(getline(ss, cell, ',')){
-            row.push_back(function(cell.c_str()));
-        }
-        records.push_back(row);
-    }
-
-    return records;
-}
 
 #endif // __TRAFFICADVISORY_H__

@@ -53,7 +53,7 @@ vector<Result_Label_PathLength> TrafficAdvisory::dijkstraHelper(const string &so
         if(vis[cur]) {continue;}
         vis[cur]=true;
         for(const string &nxt : _graph.getadjLabels(cur)){
-            int weight = specificLength?1:_graph.getWeight(cur, nxt);
+            int weight = specificLength ? 1 : _graph.getWeight(cur, nxt);
             if(!passBy.empty() && nxt==passBy) {continue;}
             if(dist[nxt]>dist[cur]+weight){
                 dist[nxt]=dist[cur]+weight;
@@ -70,6 +70,7 @@ vector<Result_Label_PathLength> TrafficAdvisory::dijkstraHelper(const string &so
 }
 
 vector<Result_Label_PathLength> TrafficAdvisory::numVertices_from(const string &source){
+    // 用dijkstra算法，把图中所有边的长度都当作1，然后求出source到各个点的最短路径长度
     return dijkstraHelper(source, "", true);
 }
 
@@ -94,7 +95,7 @@ int TrafficAdvisory::floyd(const string &source, const string &destination, cons
         if(!passBy.empty() && k==passBy) {continue;}
         for(const string &i : labels){
             for(const string &j : labels){
-                if(dist[i][j]!=INT_MAX && dist[k][j]!=INT_MAX && dist[i][j]>dist[i][k]+dist[k][j]){
+                if(dist[i][k]!=INT_MAX && dist[k][j]!=INT_MAX && dist[i][j]>dist[i][k]+dist[k][j]){
                     dist[i][j]=dist[i][k]+dist[k][j];
                 }
             }
@@ -105,7 +106,7 @@ int TrafficAdvisory::floyd(const string &source, const string &destination, cons
 }
 
 vector<Result_Path_Distance> TrafficAdvisory::allNonRepetitionPaths(const string &source, const string &destination, int maxNodes, string filename){
-    maxNodes=5;
+    maxNodes=10;
     Result_Path_Distance rpd;
     rpd.path.push_back(source);
     rpd.dist=0;

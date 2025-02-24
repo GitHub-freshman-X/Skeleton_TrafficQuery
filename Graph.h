@@ -2,6 +2,7 @@
 #define __GRAPH_H_
 
 #include <set>
+#include <limits>
 using std::set;
 
 const int MaxWeight = INT_MAX;  // 最大权值，用来表示边不存在

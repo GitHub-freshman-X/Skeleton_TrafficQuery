@@ -72,7 +72,7 @@ set<V> GraphAdjacencyList<V, W>::getadjLabels(const V& v) const {
 template<class V, class W>
 W GraphAdjacencyList<V, W>::getWeight(const V& v1, const V& v2) const {
     auto it1 = _adjList.find(v1);
-    if(v1 != _adjList.end()){
+    if(it1 != _adjList.end()){
         auto it2 = it1->second.find(v2);
         if(it2 != it1->second.end()){
             return it2->second;

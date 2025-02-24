@@ -40,7 +40,7 @@ T* makeUniqueRandomArray(int N, T(*Function)()){
     int i=0;
 
     while(uniqueStrings.size()<N){
-        string randomString=Function(i);
+        string randomString=Function();
         if(uniqueStrings.find(randomString)==uniqueStrings.end()){
             uniqueStrings.insert(randomString);
             A[i]=randomString;
