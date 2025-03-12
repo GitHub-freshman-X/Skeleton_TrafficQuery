@@ -33,7 +33,7 @@ TEST_CASE("TrafficAdvisory::1 triangle", "[part = 0][weight = 3]"){
         REQUIRE(actual_A==expect_A);
     }
 
-    SECTION("Dijkstra ans Floyd"){
+    SECTION("Dijkstra and Floyd"){
         REQUIRE(1 == solver.dijkstra("A", "B"));
         REQUIRE(1 == solver.floyd("A", "B"));
     }
